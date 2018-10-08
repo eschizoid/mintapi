@@ -1,6 +1,7 @@
 import atexit
 from datetime import date, datetime, timedelta
 import io
+import urllib3
 import json
 import os
 import os.path
@@ -78,7 +79,10 @@ def get_web_driver(email, password, headless=False, mfa_method=None,
         zip_file_url = 'https://chromedriver.storage.googleapis.com/%s/chromedriver_%s64.zip' % (CHROME_DRIVER_VERSION,
                                                                                                  zip_type)
         request = requests.get(zip_file_url)
-        zip_file = zipfile.ZipFile(io.BytesIO(request.content))
+        with open('chromedriver_%s64.zip' % zip_type, "wb") as file:
+            file.write(request.content)
+            file.close()
+        zip_file = zipfile.ZipFile('chromedriver_%s64.zip' % zip_type)
         zip_file.extractall()
         os.chmod(executable_path, 0o755)
 
